@@ -11,6 +11,38 @@ metadata:
 
 **Principio:** Una sola habilidad, múltiples contextos. El proceso es constante; los parámetros suministran el mundo específico.
 
+**Versión:** 1.0.0 (Estandarizado Lama Su)
+
+---
+
+## Estructura del Skill (Arquitectura Lama Su)
+
+```
+odoo-blog-article/
+├── README.md                    # Documentación principal estandarizada
+├── SKILL.md                     # Esta referencia técnica
+├── build.yaml                   # Configuración de build
+├── templates/                   # Templates por tipo de caso
+│   ├── bugfix.md               # 🐛 Bugfix resuelto
+│   ├── feature.md              # 💡 Feature implementada
+│   └── integration.md          # 🔌 Integración entre sistemas
+├── examples/                    # Ejemplos de artículos generados
+│   ├── bugfix-funcional.md
+│   ├── bugfix-tecnico.md
+│   ├── feature-funcional.md
+│   ├── feature-tecnico.md
+│   ├── integration-funcional.md
+│   └── integration-tecnico.md
+├── prompts/                     # Prompts separados por fase
+│   ├── system-prompt.md        # Prompt principal del sistema
+│   ├── phase1-context-analysis.md
+│   ├── phase2-anonymization.md
+│   ├── phase3-generation.md
+│   └── phase4-validation.md
+└── tests/
+    └── test_behavior.md        # Tests de comportamiento esperado
+```
+
 ---
 
 ## Parámetros de Entrada
@@ -26,46 +58,25 @@ metadata:
 
 ---
 
-## Proceso (Receta)
+## Proceso de 4 Fases
 
 ### Fase 1 — Lectura y Síntesis del Contexto
 
 **Objetivo:** Comprender el caso completo leyendo toda la conversación.
 
+**Ver prompt:** `prompts/phase1-context-analysis.md`
+
 **Pasos:**
+1. Detectar contexto actual (chat_id, topic_id)
+2. Identificar elementos clave (problema, solución, módulos, decisiones)
+3. Clasificar tipo de caso (bugfix/feature/integration)
+4. Clasificar audiencia objetivo
 
-1. **Detectar contexto actual**
-   - `chat_id`: ID del grupo/topic donde se ejecuta
-   - `topic_id`: ID del topic (si es forum)
-   - Leer historial completo de la conversación (últimos 50-100 mensajes)
-
-2. **Identificar elementos clave** (juicio, no conclusión predeterminada)
-   - ¿Cuál es el problema central descrito en los primeros mensajes?
-   - ¿Qué solución se implementó (mensajes finales con código o confirmación)?
-   - ¿Qué archivos, módulos o configuraciones están involucrados?
-   - ¿Hay referencias a documentación, módulos OCA, o forum oficial?
-   - ¿Qué decisiones técnicas o funcionales se tomaron y por qué?
-
-3. **Clasificar tipo de caso** (para seleccionar template)
-   - **bugfix:** Error resuelto, comportamiento incorrecto corregido
-   - **feature:** Implementación nueva, funcionalidad agregada
-   - **integration:** Conector entre Odoo y sistema externo
-
-**Criterio de clasificación:**
-- Si el caso es "algo estaba roto → lo arreglamos" → bugfix
-- Si el caso es "necesitábamos esto → lo implementamos" → feature
-- Si el caso es "conectar Odoo con X sistema" → integration
-- Si no está claro → feature (default)
-
-4. **Clasificar audiencia objetivo** (para adaptar contenido dentro del template)
-   - **funcional:** Para consultores y usuarios avanzados. Sin código, flujo UI completo.
-   - **tecnico:** Para desarrolladores. Código con explicación, arquitectura interna.
-   - **ejecutivo:** Para directores y tomadores de decisiones. ROI, métricas, timeline.
-
-**Criterio de clasificación:**
-- Default → funcional (la mayoría de lectores son consultores)
-- Si el topic tiene código, archivos, desarrollo → tecnico
-- Si el topic es sobre costos, ROI, decisiones de negocio → ejecutivo
+**Criterio de clasificación del tipo:**
+- Si el caso es "algo estaba roto → lo arreglamos" → **bugfix**
+- Si el caso es "necesitábamos esto → lo implementamos" → **feature**
+- Si el caso es "conectar Odoo con X sistema" → **integration**
+- Si no está claro → **feature** (default)
 
 ---
 
@@ -73,24 +84,20 @@ metadata:
 
 **Objetivo:** Transformar caso específico en problema agnóstico de interés general.
 
-**Reglas de transformación (computación, aplicar sistemáticamente):**
+**Ver prompt:** `prompts/phase2-anonymization.md`
+
+**Reglas de transformación sistemáticas:**
 
 | Dato Sensible | Transformación |
 |---------------|----------------|
 | Nombres de clientes/empresas | → "una empresa de [sector]" |
 | Nombres de personas | → "el equipo", "el administrador", "[rol]" |
 | Fechas específicas | → "durante la implementación", "en Q1 2026" |
-| Montos monetarios | → rangos genéricos, "redujo costos operativos" |
+| Montos monetarios | → "redujo costos operativos", "inversión significativa" |
 | Ubicaciones geográficas | → "en la región", "localmente" |
 | IDs de registros, base de datos | → eliminar completamente |
 | URLs internas/producción | → "el sistema", "la instancia" |
 | Módulos custom con nombres de cliente | → "un módulo de extensión" |
-
-**Reglas de generalización (juicio):**
-
-1. **Identificar sectores aplicables:** ¿En qué otras industrias este problema es común?
-2. **Extraer patrón subyacente:** ¿Qué hace que este desafío sea reconocible para múltiples usuarios?
-3. **Verificar transferibilidad:** ¿Un lector externo podría aplicar esto en su contexto?
 
 **Test de generalización:** ¿Podría este artículo aplicar a 10+ empresas diferentes sin que se note que viene de un caso específico?
 
@@ -98,11 +105,11 @@ metadata:
 
 ### Fase 3 — Generación del Artículo
 
-**Objetivo:** Producir artículo estructurado usando el template correspondiente al tipo de caso y audiencia.
+**Objetivo:** Producir artículo estructurado usando el template correspondiente.
 
-#### Selección de Template
+**Ver prompt:** `prompts/phase3-generation.md`
 
-**Según tipo de caso (`TYPE`):**
+**Selección de Template:**
 
 | Tipo | Template | Estructura |
 |------|----------|------------|
@@ -110,66 +117,13 @@ metadata:
 | `feature` | `templates/feature.md` | 📌 Contexto → 🎯 Desafío → 🔍 Análisis → 💡 Solución → ✅ Resultados → 📚 Profundizar |
 | `integration` | `templates/integration.md` | 📌 Escenario → 🔍 Arquitectura → 💡 Implementación → ⚠️ Consideraciones → ✅ Resultado |
 
-**Según audiencia (`AUDIENCE`):**
+**Marcadores de Audiencia:**
+Los templates usan `[AUDIENCE: tipo]` para contenido condicional. Al generar, incluir solo secciones de la audiencia seleccionada.
 
-Los templates usan marcadores `[AUDIENCE: tipo]` para adaptar contenido:
-- `[AUDIENCE: funcional]` → Solo para audiencia funcional (flujo UI, sin código)
-- `[AUDIENCE: tecnico]` → Solo para audiencia técnica (código, arquitectura)
-- `[AUDIENCE: ejecutivo]` → Solo para audiencia ejecutiva (ROI, timeline, métricas)
-
-Al generar el artículo, **incluir solo las secciones de la audiencia seleccionada** y remover los marcadores.
-
-#### Principio de Contenido
-
-**Jerarquía según audiencia:**
-
-- **funcional:** Explicación funcional primero (casos de negocio, historias de usuario, flujo UI). Código mínimo o ninguno.
-- **tecnico:** Código con explicación funcional (qué hace en términos de negocio). Arquitectura interna, archivos de referencia.
-- **ejecutivo:** Problema de negocio, ROI, métricas, timeline de implementación, riesgos y mitigación.
-
-**Principio de Genericidad:**
-
-El skill `odoo-blog-article` es portable: funciona con cualquier LLM, desde cualquier entorno (CLI, IDE, web, Telegram, etc.). Los artículos generados **NO deben referenciar**:
-- El entorno específico donde se ejecuta el skill (Telegram, Discord, CLI, etc.)
-- La tecnología de IA utilizada (Qwen, Claude, GPT, etc.)
-- Herramientas específicas de OpenClaw o del sistema que lo ejecuta
-
-Los artículos deben ser **agnósticos del entorno de generación**. Si el caso involucra una integración con IA, describirla como "un sistema de IA" sin especificar el proveedor. El foco es siempre el caso de Odoo, no la herramienta que genera el artículo.
-
-#### Longitudes objetivo:
-- `short`: 1000-1500 palabras (caso simple, solución directa, sin ejemplos extensos)
-- `medium`: 2000-3500 palabras (caso completo con contexto, explicación paso a paso, 1-2 ejemplos)
-- `long`: 4000-6000 palabras (caso completo con contexto profundo, explicación detallada, múltiples ejemplos, casos de uso adicionales, troubleshooting, lecciones extendidas)
-
----
-
-**Referencia rápida de secciones por template:**
-
-**bugfix:**
-1. 🐛 El Problema (2-3 oraciones + síntomas + impacto)
-2. 🔍 Diagnóstico (causa raíz + evidencia)
-3. 🔧 La Solución (código o configuración + verificación)
-4. ✅ Resultado (checklist de verificación + lección aprendida)
-5. 📚 Referencias (issues, commits, docs)
-6. 💬 ¿Te pasó lo mismo?
-
-**feature:**
-1. 📌 Contexto (gancho + sector + promesa de valor)
-2. 🎯 El Desafío (historia de usuario + flujo actual vs deseado + soluciones que NO funcionan)
-3. 🔍 Análisis Técnico (estado default + módulos + arquitectura)
-4. 💡 La Solución (alternativas + implementación + configuración y pruebas)
-5. ✅ Resultados y Beneficios (por rol + impacto medible + lecciones)
-6. 📚 Para Profundizar (docs, OCA, forum)
-7. 💬 ¿Tu experiencia es diferente?
-
-**integration:**
-1. 📌 Escenario (sistemas involucrados + por qué integrar)
-2. 🔍 Arquitectura (protocolo + autenticación + flujo de datos + modelo)
-3. 💡 Implementación (configuración ambos lados + código esencial + pruebas)
-4. ⚠️ Consideraciones y Limitaciones (rate limits + errores comunes + edge cases)
-5. ✅ Resultado (qué se logra + beneficios + verificación)
-6. 📚 Referencias (docs de ambos sistemas)
-7. 💬 ¿Integraste de otra forma?
+**Longitudes objetivo:**
+- `short`: 1000-1500 palabras
+- `medium`: 2000-3500 palabras
+- `long`: 4000-6000 palabras
 
 ---
 
@@ -177,7 +131,9 @@ Los artículos deben ser **agnósticos del entorno de generación**. Si el caso 
 
 **Objetivo:** Asegurar calidad antes de entregar.
 
-#### Checklist de Validación (aplicar sistemáticamente)
+**Ver prompt:** `prompts/phase4-validation.md`
+
+**Checklist de Validación:**
 
 **Seguridad y Anonimización:**
 - [ ] ¿Ningún nombre de cliente real aparece?
@@ -188,26 +144,51 @@ Los artículos deben ser **agnósticos del entorno de generación**. Si el caso 
 
 **Calidad Funcional:**
 - [ ] ¿Un consultor funcional puede entenderlo sin saber programación? (solo si audience=funcional)
-- [ ] ¿Hay al menos 1 historia de usuario concreta (con personaje y situación)? (feature/integration)
-- [ ] ¿El flujo está descrito desde la UI (Menú → Acción)? (audience=funcional)
-- [ ] ¿El código es mínimo (solo referencias, 1-2 líneas)? (audience=funcional)
-- [ ] ¿El código tiene explicación funcional? (audience=tecnico)
-- [ ] ¿Los beneficios están por rol (Ventas, Logística, etc.)? (feature)
-- [ ] ¿Las verificaciones son funcionales (desde la UI)?
+- [ ] ¿Hay al menos 1 historia de usuario concreta?
+- [ ] ¿El flujo está descrito desde la UI? (audience=funcional)
+- [ ] ¿Los beneficios están por rol? (feature)
 
 **Transferibilidad:**
 - [ ] ¿Podría este artículo aplicar a 10+ empresas diferentes?
 - [ ] ¿Un lector externo podría identificar el cliente original? (debe ser NO)
-- [ ] ¿El problema descrito es reconocible para usuarios de Odoo?
-- [ ] ¿La solución es aplicable en contextos similares?
 
 **Formato:**
 - [ ] ¿Título claro y descriptivo (60-80 caracteres)?
 - [ ] ¿Longitud dentro del target seleccionado?
-- [ ] ¿Links verificados y activos?
-- [ ] ¿Tags relevantes asignados?
+- [ ] ¿Metadata completa al final?
 
-#### Generación de Archivo
+---
+
+## Principios de Diseño
+
+### 1. Portabilidad del Contenido
+Los artículos generados NO deben referenciar:
+- El entorno específico donde se ejecuta el skill (Telegram, Discord, CLI, etc.)
+- La tecnología de IA utilizada (GPT, Claude, Qwen, etc.)
+- Herramientas específicas de OpenClaw o el sistema
+
+Los artículos deben ser **agnósticos del entorno de generación**.
+
+### 2. Templates Condicionales por Audiencia
+Cada template usa marcadores `[AUDIENCE: tipo]` para adaptar contenido:
+- `[AUDIENCE: funcional]` → Solo para audiencia funcional
+- `[AUDIENCE: tecnico]` → Solo para audiencia técnica
+- `[AUDIENCE: ejecutivo]` → Solo para audiencia ejecutiva
+
+### 3. Anonimización Sistemática
+Las reglas de transformación son predefinidas y se aplican consistentemente, no dependen del juicio humano en cada caso.
+
+### 4. Principio "Bastante Bien"
+Después de cada ejecución, clasificar resultado:
+- ❌ **Malo:** Error obvio, dato sensible expuesto
+- ⚠️ **OK:** Funciona pero podría ser mejor
+- ✅ **Excelente:** Listo para publicar
+
+Las respuestas "OK" son donde vive la mejora real del sistema.
+
+---
+
+## Generación de Archivo
 
 1. **Crear directorio si no existe:**
    ```
@@ -225,7 +206,7 @@ Los artículos deben ser **agnósticos del entorno de generación**. Si el caso 
    - Metadata al final: Tipo, audiencia, topic origen, fecha, longitud, estado (BORRADOR)
 
 4. **Adjuntar en sesión (si ATTACH = true):**
-   - Enviar archivo como adjunto en la misma conversación
+   - Enviar archivo como adjunto
    - Caption: Título, ruta completa, recordatorio de checklist
 
 ---
@@ -242,26 +223,6 @@ Los artículos deben ser **agnósticos del entorno de generación**. Si el caso 
 - Que la solución funciona en la versión mencionada
 - Que los links a documentación oficial están activos
 - Que el código de ejemplo es autocontenido y testeable
-
----
-
-## Mejora Continua (Principio: "Bastante Bien")
-
-**Después de cada ejecución:**
-
-1. **Clasificar resultado:**
-   - ❌ Malo: Error obvio, dato sensible expuesto, artículo incomprensible
-   - ⚠️ OK: Funciona pero podría ser mejor (falta contexto, beneficios poco claros)
-   - ✅ Excelente: Listo para publicar con mínimos ajustes
-
-2. **Si es "OK":** Analizar brecha
-   - ¿Qué sección quedó débil?
-   - ¿Qué juicio faltó aplicar?
-   - ¿Qué contexto no se incluyó?
-
-3. **Actualizar skill:** Codificar aprendizaje en la receta para próxima ejecución
-
-**Principio:** Las respuestas "OK" son donde vive la mejora real del sistema.
 
 ---
 
@@ -283,17 +244,24 @@ Los artículos deben ser **agnósticos del entorno de generación**. Si el caso 
 
 ## Referencias
 
-- **Templates:**
-  - `templates/bugfix.md` — Bugfix / problema resuelto
-  - `templates/feature.md` — Feature / implementación nueva
-  - `templates/integration.md` — Integración / conector entre sistemas
-- **Ejemplos:**
-  - `examples/bugfix-funcional.md` — Bugfix con audiencia funcional
-  - `examples/bugfix-tecnico.md` — Bugfix con audiencia técnica
-  - `examples/feature-funcional.md` — Feature con audiencia funcional
-  - `examples/feature-tecnico.md` — Feature con audiencia técnica
-  - `examples/integration-funcional.md` — Integración con audiencia funcional
-  - `examples/integration-tecnico.md` — Integración con audiencia técnica
-- **Anonimización:** `prompts/anonymization.md`
+- **Documentación principal:** `README.md`
+- **Configuración de build:** `build.yaml`
+- **Prompts:** `prompts/`
+- **Templates:** `templates/`
+- **Ejemplos:** `examples/`
+- **Tests:** `tests/test_behavior.md`
 
-Si no encuentras los templates y ejemplos, debes guiar al usuario para que te describa qué tipo de artículo le gusta, crear con el usuario un template y un ejemplo, almacenarlo en el lugar de referencia para que puedas usarlo. Si los templates y ejemplos ya existen, usas los existentes sin crear uno nuevo.
+---
+
+## Notas de Estandarización Lama Su
+
+Este skill ha sido estandarizado siguiendo la arquitectura Lama Su:
+
+1. ✅ Metadatos YAML completos en `README.md`
+2. ✅ `build.yaml` con configuración de build
+3. ✅ Prompts separados por fase en `prompts/`
+4. ✅ Tests de comportamiento en `tests/`
+5. ✅ Templates con frontmatter estandarizado
+6. ✅ Ejemplos de referencia para cada combinación
+
+Ver `README.md` para documentación de uso completa.

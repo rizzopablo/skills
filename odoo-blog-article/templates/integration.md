@@ -1,7 +1,29 @@
 ---
-type: integration
-audience: funcional|tecnico|ejecutivo
-description: Template para artículos de integración / conector entre sistemas
+name: integration
+type: template
+description: Template para artículos de blog tipo integration / conector entre sistemas
+author: lama_su
+version: 1.0.0
+openclaw:
+  compatible_audiences: [funcional, tecnico, ejecutivo]
+  sections:
+    - escenario
+    - arquitectura
+    - implementacion
+    - consideraciones
+    - resultado
+    - referencias
+    - pregunta
+  estimated_length:
+    short: 1000-1500
+    medium: 2000-3500
+    long: 4000-6000
+  word_distribution:
+    escenario: "300-400"
+    arquitectura: "500-700"
+    implementacion: "800-1200"
+    consideraciones: "200-300"
+    resultado: "200-300"
 ---
 
 # [TÍTULO: Integrar Odoo con [Sistema Externo] — guía completa]
@@ -185,4 +207,5 @@ Sistema externo → [webhook/callback] → Odoo
 - Versión Odoo: [v16/v17/v18/v19]
 - Sistemas: [Odoo vX + Sistema externo vY]
 - Topic origen: #[ID]
+- Longitud: [short|medium|long]
 - Estado: BORRADOR

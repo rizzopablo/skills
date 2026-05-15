@@ -1,7 +1,29 @@
 ---
-type: feature
-audience: funcional|tecnico|ejecutivo
-description: Template para artículos de feature / implementación nueva
+name: feature
+type: template
+description: Template para artículos de blog tipo feature / implementación nueva
+author: lama_su
+version: 1.0.0
+openclaw:
+  compatible_audiences: [funcional, tecnico, ejecutivo]
+  sections:
+    - contexto
+    - desafio
+    - analisis
+    - solucion
+    - resultados
+    - profundizar
+    - pregunta
+  estimated_length:
+    short: 1000-1500
+    medium: 2000-3500
+    long: 4000-6000
+  word_distribution:
+    contexto: "300-400"
+    desafio: "400-600"
+    analisis: "500-700"
+    solucion: "800-1200"
+    resultados: "300-400"
 ---
 
 # [TÍTULO: Cómo implementar [feature] en Odoo — caso práctico]
@@ -186,4 +208,5 @@ description: Template para artículos de feature / implementación nueva
 - Audiencia: [funcional|tecnico|ejecutivo]
 - Versión Odoo: [v16/v17/v18/v19]
 - Topic origen: #[ID]
+- Longitud: [short|medium|long]
 - Estado: BORRADOR

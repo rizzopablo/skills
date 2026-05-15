@@ -1,0 +1,75 @@
+---
+name: odoo-blog-article
+version: 1.0.0
+type: skill
+description: Transforma casos resueltos de Odoo en artículos de blog publicables
+
+build:
+  engine: prompt-based
+  entry: prompts/system-prompt.md
+
+assets:
+  templates:
+    - templates/bugfix.md
+    - templates/feature.md
+    - templates/integration.md
+  examples:
+    - examples/bugfix-funcional.md
+    - examples/bugfix-tecnico.md
+    - examples/feature-funcional.md
+    - examples/feature-tecnico.md
+    - examples/integration-funcional.md
+    - examples/integration-tecnico.md
+  prompts:
+    - prompts/system-prompt.md
+    - prompts/phase1-context-analysis.md
+    - prompts/phase2-anonymization.md
+    - prompts/phase3-generation.md
+    - prompts/phase4-validation.md
+
+tests:
+  - tests/test_behavior.md
+
+parameters:
+  CONTEXT:
+    type: conversation
+    required: false
+    default: auto-detected
+  TYPE:
+    type: choice
+    options: [bugfix, feature, integration]
+    required: false
+    default: auto-detected
+  AUDIENCE:
+    type: choice
+    options: [funcional, tecnico, ejecutivo]
+    required: false
+    default: funcional
+  LENGTH:
+    type: choice
+    options: [short, medium, long]
+    required: false
+    default: medium
+  OUTPUT_DIR:
+    type: path
+    required: false
+    default: projects/odoo/blog-articles/
+  ATTACH:
+    type: boolean
+    required: false
+    default: true
+
+outputs:
+  format: markdown
+  file_pattern: "YYYY-MM-DD_<titulo-slug>.md"
+  attach_to_session: true
+
+validation:
+  pre:
+    - check_context_available
+    - check_templates_exist
+  post:
+    - validate_anonymization
+    - validate_structure
+    - validate_length
+    - validate_audience_content

@@ -1,7 +1,22 @@
 ---
-type: bugfix
-audience: funcional|tecnico|ejecutivo
-description: Template para artículos de bugfix / problema resuelto
+name: bugfix
+type: template
+description: Template para artículos de blog tipo bugfix / problema resuelto
+author: lama_su
+version: 1.0.0
+openclaw:
+  compatible_audiences: [funcional, tecnico, ejecutivo]
+  sections:
+    - problema
+    - diagnostico
+    - solucion
+    - resultado
+    - referencias
+    - pregunta
+  estimated_length:
+    short: 1000-1500
+    medium: 2000-2500
+    long: 3000-3500
 ---
 
 # [TÍTULO: Bug resuelto en Odoo — descripción corta del problema]
@@ -102,4 +117,5 @@ description: Template para artículos de bugfix / problema resuelto
 - Audiencia: [funcional|tecnico|ejecutivo]
 - Versión Odoo: [v16/v17/v18/v19]
 - Topic origen: #[ID]
+- Longitud: [short|medium|long]
 - Estado: BORRADOR
