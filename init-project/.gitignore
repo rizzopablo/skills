@@ -1,0 +1,5 @@
+# Config local (nombres de instancia, URLs internas) — NUNCA versionar
+.env
+
+__pycache__/
+*.pyc
